@@ -253,14 +253,20 @@ namespace CustomMasterDetailPageWidth.iOS
             var masterFrame = frame;
             masterFrame.Width = (int)(Math.Min(masterFrame.Width, masterFrame.Height) * _WidthRatio);
 
-            masterFrame.X = frame.Width - masterFrame.Width;
+            //masterFrame.X = frame.Width - masterFrame.Width;
+
 
             _masterController.View.Frame = masterFrame;
 
             var target = frame;
 
             if (Presented)
-                target.X -= masterFrame.Width;
+                target.X = masterFrame.Width;
+
+            #region Swip From Right
+            //target.X -= masterFrame.Width;
+            #endregion
+
 
             if (animated)
             {
@@ -366,9 +372,16 @@ namespace CustomMasterDetailPageWidth.iOS
                         var targetFrame = detailView.Frame;
 
                         if (Presented)
-                            targetFrame.X = (nfloat)Math.Min(0, -_masterController.View.Frame.Width + Math.Max(0, motion));
+                            targetFrame.X = (nfloat)Math.Max(0, _masterController.View.Frame.Width + Math.Min(0, motion));
                         else
-                            targetFrame.X = (nfloat)Math.Max(-_masterController.View.Frame.Width, Math.Min(0, motion));
+                            targetFrame.X = (nfloat)Math.Min(_masterController.View.Frame.Width, Math.Max(0, motion));
+
+                        #region Swip From Right
+                        //if (Presented)
+                        //    targetFrame.X = (nfloat)Math.Min(0, -_masterController.View.Frame.Width + Math.Max(0, motion));
+                        //else
+                        //    targetFrame.X = (nfloat)Math.Max(-_masterController.View.Frame.Width, Math.Min(0, motion));
+                        #endregion
 
                         detailView.Frame = targetFrame;
                         break;
@@ -377,17 +390,25 @@ namespace CustomMasterDetailPageWidth.iOS
                         var masterFrame = _masterController.View.Frame;
                         if (Presented)
                         {
-                            if (detailFrame.X > -masterFrame.Width * .75)
+                            if (detailFrame.X < masterFrame.Width * .75)
                                 Presented = false;
                             else
                                 LayoutChildren(true);
+                            //if (detailFrame.X > -masterFrame.Width * .75)
+                            //    Presented = false;
+                            //else
+                            //    LayoutChildren(true);
                         }
                         else
                         {
-                            if (detailFrame.X < -masterFrame.Width * .25)
+                            if (detailFrame.X > masterFrame.Width * .25)
                                 Presented = true;
                             else
                                 LayoutChildren(true);
+                            //if (detailFrame.X < -masterFrame.Width * .25)
+                            //    Presented = true;
+                            //else
+                            //    LayoutChildren(true);
                         }
                         break;
                 }
